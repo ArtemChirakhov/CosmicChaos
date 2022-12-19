@@ -6,29 +6,43 @@ class player:
     def __init__(self, game):
         self.game = game
         self.x = 1.5
-        self.y = 0
+        self.y = 1.5
         self.angle = 0
-        self.player_speed = 0.04
+        self.player_speed = 0.004
         self.angle_speed = 0.002
+        self.diagonal_speed = 0.004 * 0.70710678118
 
     def movement(self):
+        counter = 0
         sin_a = math.sin(self.angle)
         cos_a = math.cos(self.angle)
         dx = 0
         dy = 0
-        speed = self.player_speed * self.game.delta_time
-        speed_sin = speed * sin_a
-        speed_cos = speed * cos_a
-
         keys = pygame.key.get_pressed()
+        #исправление диагональной скорости
         if keys[pygame.K_w]:
-            dy -= self.player_speed
+            counter += 1
         if keys[pygame.K_s]:
-            dy += self.player_speed
+            counter += 1
         if keys[pygame.K_a]:
-            dx -= self.player_speed
+            counter += 1
         if keys[pygame.K_d]:
-            dx += self.player_speed
+            counter += 1
+        if counter == 2:
+            speed = self.diagonal_speed * self.game.delta_time
+        else:
+            speed = self.player_speed * self.game.delta_time
+        #тут конец
+
+        if keys[pygame.K_w] :
+             dy -= speed
+        if keys[pygame.K_s]:
+             dy += speed
+        if keys[pygame.K_a]:
+             dx -= speed
+        if keys[pygame.K_d]:
+            dx += speed
+
         self.x += dx
         self.y += dy
 
