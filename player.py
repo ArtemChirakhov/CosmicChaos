@@ -2,6 +2,7 @@ import math
 
 import pygame
 
+
 class player:
     def __init__(self, game):
         self.game = game
@@ -19,7 +20,7 @@ class player:
         dx = 0
         dy = 0
         keys = pygame.key.get_pressed()
-        #исправление диагональной скорости
+        # исправление диагональной скорости
         if keys[pygame.K_w]:
             counter += 1
         if keys[pygame.K_s]:
@@ -32,14 +33,14 @@ class player:
             speed = self.diagonal_speed * self.game.delta_time
         else:
             speed = self.player_speed * self.game.delta_time
-        #тут конец
+        # тут конец
 
-        if keys[pygame.K_w] :
-             dy -= speed
+        if keys[pygame.K_w]:
+            dy -= speed
         if keys[pygame.K_s]:
-             dy += speed
+            dy += speed
         if keys[pygame.K_a]:
-             dx -= speed
+            dx -= speed
         if keys[pygame.K_d]:
             dx += speed
 
@@ -50,7 +51,7 @@ class player:
             self.angle -= self.angle_speed * self.game.delta_time
         if keys[pygame.K_RIGHT]:
             self.angle += self.angle_speed * self.game.delta_time
-        self.angle %= math.tau
+        self.angle %= math.tau  # угол в модуле math считается в радианах
 
     def draw(self):
         pygame.draw.line(self.game.screen, 'blue', (self.x * 100, self.y * 100),
