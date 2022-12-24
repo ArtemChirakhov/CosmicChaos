@@ -70,10 +70,10 @@ class player:
 
 
     def draw(self):
-        pygame.draw.line(self.game.screen, 'blue', (self.x * 100, self.y * 100),
+        pygame.draw.line(self.game.screen, 'red', (self.x * 100, self.y * 100),
                          (self.x * 100 + 720 * math.cos(self.kickguy_angle),
                           self.y * 100 + 720 * math.sin(self.kickguy_angle)), 2)
-        pygame.draw.circle(self.game.screen, 'red', (self.x * 100, self.y * 100), 15)
+        pygame.draw.circle(self.game.screen, 'blue', (self.x * 100, self.y * 100), 15)
 
     def update(self):
         self.movement()
