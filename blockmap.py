@@ -33,4 +33,4 @@ class Map:
 
     def draw(self):
         for pos in self.world_map:
-            pygame.draw.rect(self.game.screen, 'darkgray', (pos[0] * 50, pos[1] * 50, 50, 50), 2)
+            pygame.draw.rect(self.game.screen, 'darkgray', (pos[0] * 50, pos[1] * 50, 50, 50), 1)
