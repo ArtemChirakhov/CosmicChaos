@@ -69,7 +69,8 @@ class player:
         self.collision_check(dx, dy)
 
     def wall_check(self, x, y):
-        return (x, y) not in self.game.map.world_map
+        if (x, y, 1) not in self.game.map.world_map:
+            return (x, y)
 
     def collision_check(self, dx, dy):
         scale = self.player_size / self.game.delta_time
@@ -83,7 +84,7 @@ class player:
         pygame.draw.line(self.game.screen, 'red', (self.x * 50, self.y * 50),
                          (self.x * 50 + 720 * math.cos(self.kickguy_angle),
                           self.y * 50 + 720 * math.sin(self.kickguy_angle)), 1)
-        pygame.draw.circle(self.game.screen, 'blue', (self.x * 50, self.y * 50), 15)
+        pygame.draw.circle(self.game.screen, 'cyan', (self.x * 50, self.y * 50), 10)
 
     def update(self):
         self.movement()

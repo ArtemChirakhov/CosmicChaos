@@ -7,8 +7,8 @@ block_map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -28,9 +28,19 @@ class Map:
     def get_map(self):
         for i in range(len(self.block_map)):
             for j in range(len(self.block_map[i])):
-                if self.block_map[i][j]:
-                    self.world_map[(j, i)] = self.block_map[i][j]
+                if self.block_map[i][j] == 1:
+                    #айди объектов мира:
+                    # 0 - пустота
+                    # 1 - стена
+                    # 2 - выход с уровня
+                    # можно сделать ещё сколько угодно
+                    self.world_map[(j, i, 1)] = self.block_map[i][j]
+                if self.block_map[i][j] == 2:
+                    self.world_map[(j, i, 2)] = self.block_map[i][j]
 
     def draw(self):
         for pos in self.world_map:
-            pygame.draw.rect(self.game.screen, 'darkgray', (pos[0] * 50, pos[1] * 50, 50, 50), 1)
+            if pos[2] == 1:
+                pygame.draw.rect(self.game.screen, 'darkgray', (pos[0] * 50, pos[1] * 50, 50, 50))
+            elif pos[2] == 2:
+                pygame.draw.rect(self.game.screen, 'green', (pos[0] * 50, pos[1] * 50, 50, 50))
