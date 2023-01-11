@@ -1,6 +1,7 @@
 import sys
 
 from player import *
+from blockmap import*
 
 
 class Game:
@@ -16,6 +17,7 @@ class Game:
 
     def new_game(self):
         self.kickguy = player(self)
+        self.map = Map(self)
 
     def update(self):
         self.kickguy.update()
@@ -26,6 +28,7 @@ class Game:
     def draw(self):
         self.screen.fill('black')
         self.kickguy.draw()
+        self.map.draw()
 
     def check_events(self):
         for event in pygame.event.get():
