@@ -12,11 +12,12 @@ class player:
         self.player_speed = 0.004
         self.angle_speed = 0.002
         self.diagonal_speed = 0.004 * 0.70710678118
+        self.player_size = 80
 
     def angle(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        mouse_y /= 100
-        mouse_x /= 100
+        mouse_y /= 50
+        mouse_x /= 50
         if mouse_y > self.y:
             if mouse_x == self.x:
                 self.kickguy_angle = 1.570796325
@@ -65,15 +66,25 @@ class player:
         if keys[pygame.K_d]:
             dx += speed
 
-        self.x += dx
-        self.y += dy
+        self.collision_check(dx, dy)
+
+    def wall_check(self, x, y):
+        if (x, y, 1) not in self.game.map.world_map:
+            return (x, y)
+
+    def collision_check(self, dx, dy):
+        scale = self.player_size / self.game.delta_time
+        if self.wall_check(int(self.x + dx * scale), int(self.y)):
+            self.x += dx
+        if self.wall_check(int(self.x), int(self.y + dy * scale)):
+            self.y += dy
 
 
     def draw(self):
-        pygame.draw.line(self.game.screen, 'red', (self.x * 100, self.y * 100),
-                         (self.x * 100 + 720 * math.cos(self.kickguy_angle),
-                          self.y * 100 + 720 * math.sin(self.kickguy_angle)), 2)
-        pygame.draw.circle(self.game.screen, 'blue', (self.x * 100, self.y * 100), 15)
+        pygame.draw.line(self.game.screen, 'red', (self.x * 50, self.y * 50),
+                         (self.x * 50 + 720 * math.cos(self.kickguy_angle),
+                          self.y * 50 + 720 * math.sin(self.kickguy_angle)), 1)
+        pygame.draw.circle(self.game.screen, 'cyan', (self.x * 50, self.y * 50), 10)
 
     def update(self):
         self.movement()
