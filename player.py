@@ -35,6 +35,9 @@ class player:
 
         self.kickguy_angle %= math.tau  # угол в модуле math считается в радианах
 
+    def return_angle(self):
+        return self.kickguy_angle
+
     def movement(self):
         counter = 0
         sin_a = math.sin(self.kickguy_angle)
@@ -92,3 +95,6 @@ class player:
 
     def cords(self):
         return self.x, self.y
+
+    def tile(self):
+        return self.x // 1, self.y // 1

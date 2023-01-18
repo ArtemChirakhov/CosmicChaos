@@ -1,5 +1,6 @@
 import sys
 
+from raycasting import *
 from player import *
 from blockmap import*
 
@@ -18,9 +19,11 @@ class Game:
     def new_game(self):
         self.kickguy = player(self)
         self.map = Map(self)
+        self.raycasting = RayCasting(self)
 
     def update(self):
         self.kickguy.update()
+        self.raycasting.update()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
