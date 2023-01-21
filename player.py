@@ -3,7 +3,7 @@ import math
 import pygame
 
 
-class player:
+class Player:
     def __init__(self, game):
         self.game = game
         self.x = 1.5
@@ -34,6 +34,9 @@ class player:
                 self.kickguy_angle = math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
 
         self.kickguy_angle %= math.tau  # угол в модуле math считается в радианах
+
+    def return_angle(self):
+        return self.kickguy_angle
 
     def movement(self):
         counter = 0
@@ -92,3 +95,6 @@ class player:
 
     def cords(self):
         return self.x, self.y
+
+    def tile(self):
+        return self.x // 1, self.y // 1
