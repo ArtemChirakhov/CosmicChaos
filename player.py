@@ -3,7 +3,7 @@ import math
 import pygame
 
 
-class player:
+class Player:
     def __init__(self, game):
         self.game = game
         self.x = 1.5

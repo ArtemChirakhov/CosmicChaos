@@ -3,14 +3,14 @@ import pygame
 
 # В этом файле описана система Рейкаста
 # От лица игрока пускают лучи и считают глубину до объекта при помощи математики и подсчёта пересечений с клетакми мира
-
+# Depth измеряется в клетках
 
 FOV = math.pi / 3
 HALF_FOV = FOV / 2
-NUM_RAYS = 1320 // 2  # 1600 - ШИРИНА ЭКРАНА
+NUM_RAYS = 2000 // 2  # 1600 - ШИРИНА ЭКРАНА
 HALF_NUM_RAYS = NUM_RAYS // 2
 DELTA_ANGLE = FOV / NUM_RAYS
-MAX_DEPTH = 20
+MAX_DEPTH = 32
 
 
 class RayCasting:
@@ -68,9 +68,10 @@ class RayCasting:
                 depth = depth_hor
 
             pygame.draw.line(self.game.screen, 'white', (50 * x, 50 * y),
-                             (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 2)
+                             (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
 
             ray_angle += DELTA_ANGLE
+
 
     def update(self):
         self.cast_ray()

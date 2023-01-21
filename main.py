@@ -17,7 +17,7 @@ class Game:
         self.new_game()
 
     def new_game(self):
-        self.kickguy = player(self)
+        self.kickguy = Player(self)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
 
