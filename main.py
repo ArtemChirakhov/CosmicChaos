@@ -21,22 +21,27 @@ class Game:
         self.kickguy = Player(self)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
-        self.enemy = Enemy(self)
-        self.all_sprites = pygame.sprite.Group()
-        self.all_sprites.add(self.enemy)
+        self.enemy = Enemy(self, 300, 300, 'red')
+        self.enemy1 = Enemy(self, 400, 400, 'orange')
+        #self.all_sprites = pygame.sprite.Group()
+        #self.all_sprites.add(self.enemy)
 
     def update(self):
-        self.all_sprites.update()
         self.kickguy.update()
-        #self.raycasting.update()
+        self.raycasting.update()
+        self.enemy.draw()
+        self.enemy1.draw()
+        #self.all_sprites.update()
+        self.enemy.update()
+        self.enemy1.update()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
 
     def draw(self):
         self.screen.fill('black')
-        self.all_sprites.draw(self.screen)
         self.kickguy.draw()
+        #self.all_sprites.draw(self.screen)
         self.map.draw()
 
     def check_events(self):
