@@ -7,7 +7,7 @@ import pygame
 
 FOV = math.pi / 3
 HALF_FOV = FOV / 2
-NUM_RAYS = 2000 // 2  # 1600 - ШИРИНА ЭКРАНА
+NUM_RAYS = 2000 // 2  # 1600 - ширина экрана, но мы увеличили кол-во лучей чтобы не появлялись артефакты
 HALF_NUM_RAYS = NUM_RAYS // 2
 DELTA_ANGLE = FOV / NUM_RAYS
 MAX_DEPTH = 32

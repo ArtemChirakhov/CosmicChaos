@@ -3,6 +3,7 @@ import sys
 from raycasting import *
 from player import *
 from blockmap import*
+from menu import*
 
 
 class Game:
@@ -14,6 +15,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.RES)
         self.clock = pygame.time.Clock()
         self.delta_time = 1
+        self.menu = Menu(self)
         self.new_game()
 
     def new_game(self):
@@ -42,8 +44,11 @@ class Game:
     def run(self):
         while True:
             self.check_events()
-            self.update()
-            self.draw()
+            if self.menu.is_closed():
+                self.update()
+                self.draw()
+            else:
+                self.menu.draw()
 
 
 if __name__ == '__main__':
