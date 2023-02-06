@@ -1,9 +1,9 @@
 import sys
 
-from raycasting import *
-from player import *
-from blockmap import*
+from blockmap import *
 from enemy import Enemy
+from player import *
+from raycasting import *
 
 
 class Game:
@@ -21,7 +21,7 @@ class Game:
         self.player1 = Player(self)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
-        #self.enemy = Enemy(self, 300, 300, 'red')
+        # self.enemy = Enemy(self, 300, 300, 'red')
         self.enemy1 = Enemy(self, 400, 400, 'orange')
 
     def update(self):
