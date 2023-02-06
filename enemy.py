@@ -1,5 +1,3 @@
-import pygame
-
 from raycasting import *
 
 
@@ -75,7 +73,7 @@ class Enemy():
         if self.game.player1.return_angle() - self.game.weapon.return_half_fov() <= (
                 self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + \
                 self.game.weapon.return_half_fov():
-            return  True
+            return True
         else:
             return False
 
@@ -222,21 +220,26 @@ class Enemy():
         return False
         ###############################################
 
-    def update(self):
-        if not self.is_dead:
-            self.move()
-            self.x_p = self.x / 50
-            self.y_p = self.y / 50
-            self.x_t = int(self.x_p)
-            self.y_t = int(self.y_p)
-            self.draw()
-
     def get_damage(self):
         if self.is_in_range():
             self.HP -= self.DAMAGE
             print('Hit')
         if self.HP <= 0:
             self.is_dead = True
+
+    def deal_damage(self):
+        if (self.x_t, self.y_t) == self.game.player1.tile():
+            self.game.player1.inflict_damage()
+
+    def update(self):
+        if not self.is_dead:
+            self.move()
+            self.deal_damage()
+            self.x_p = self.x / 50
+            self.y_p = self.y / 50
+            self.x_t = int(self.x_p)
+            self.y_t = int(self.y_p)
+            self.draw()
 
     def draw(self):
         if self.ray_cast_player_npc() and self.is_in_sight():
