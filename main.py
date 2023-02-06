@@ -3,6 +3,7 @@ import sys
 from raycasting import *
 from player import *
 from blockmap import*
+from enemy import Enemy
 
 
 class Game:
@@ -17,20 +18,23 @@ class Game:
         self.new_game()
 
     def new_game(self):
-        self.kickguy = Player(self)
+        self.player1 = Player(self)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
+        #self.enemy = Enemy(self, 300, 300, 'red')
+        self.enemy1 = Enemy(self, 400, 400, 'orange')
 
     def update(self):
-        self.kickguy.update()
+        self.player1.update()
         self.raycasting.update()
+        self.enemy1.update()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
 
     def draw(self):
         self.screen.fill('black')
-        self.kickguy.draw()
+        self.player1.draw()
         self.map.draw()
 
     def check_events(self):
@@ -42,8 +46,8 @@ class Game:
     def run(self):
         while True:
             self.check_events()
-            self.update()
             self.draw()
+            self.update()
 
 
 if __name__ == '__main__':

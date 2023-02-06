@@ -1,5 +1,4 @@
 import math
-
 import pygame
 
 
@@ -22,16 +21,16 @@ class Player:
             if mouse_x == self.x:
                 self.kickguy_angle = 1.570796325
             elif mouse_x < self.x:
-                self.kickguy_angle = 3.14 + math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
+                self.kickguy_angle = 3.14 + math.atan((mouse_y - self.y) / (mouse_x - self.x))
             else:
-                self.kickguy_angle = math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
+                self.kickguy_angle = math.atan((mouse_y - self.y) / (mouse_x - self.x))
         else:
             if mouse_x == self.x:
                 self.kickguy_angle = 4.712388975
             elif mouse_x < self.x:
-                self.kickguy_angle = 3.14 + math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
+                self.kickguy_angle = 3.14 + math.atan((mouse_y - self.y) / (mouse_x - self.x))
             else:
-                self.kickguy_angle = math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
+                self.kickguy_angle = math.atan((mouse_y - self.y) / (mouse_x - self.x))
 
         self.kickguy_angle %= math.tau  # угол в модуле math считается в радианах
 
@@ -73,7 +72,7 @@ class Player:
 
     def wall_check(self, x, y):
         if (x, y, 1) not in self.game.map.world_map:
-            return (x, y)
+            return x, y
 
     def collision_check(self, dx, dy):
         scale = self.player_size / self.game.delta_time
@@ -81,7 +80,6 @@ class Player:
             self.x += dx
         if self.wall_check(int(self.x), int(self.y + dy * scale)):
             self.y += dy
-
 
     def draw(self):
         pygame.draw.line(self.game.screen, 'red', (self.x * 50, self.y * 50),
@@ -97,4 +95,4 @@ class Player:
         return self.x, self.y
 
     def tile(self):
-        return self.x // 1, self.y // 1
+        return int(self.x), int(self.y)
