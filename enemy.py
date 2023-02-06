@@ -1,13 +1,13 @@
-import math
+import pygame
 
 from raycasting import *
-from player import*
 
 
 class Enemy():
 
     def __init__(self, game, x, y, color):
         super().__init__()
+        # координаты и тд.
         self.x = x
         self.y = y
         self.x_p = self.x / 50
@@ -15,12 +15,16 @@ class Enemy():
         self.x_t = int(self.x_p)
         self.y_t = int(self.y_p)
         self.angle = 1
+        # отображение и перемещение
         self.color = color
         self.speed = 0.4
         self.game = game
         self.enemy_size = 10
         self.in_sight = False
-        self.in_sight_tiles = []
+        # стрельба и урон
+        self.DAMAGE = 50
+        self.HP = 100
+        self.is_dead = False
 
     def wall_check(self, x, y):
         if (x, y, 1) not in self.game.map.world_map:
@@ -58,12 +62,22 @@ class Enemy():
         dy = math.sin(self.angle) * self.speed
         self.collision_check(dx * 5, dy * 5)
 
-    def is_in_sight(self): #находится ли в поле взгляда
-        if (self.angle + math.pi) % math.tau >= self.game.player1.return_angle() - self.game.raycasting.return_half_fov() and (self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + self.game.raycasting.return_half_fov():
+    def is_in_sight(self):  # находится ли в поле взгляда
+        if self.game.player1.return_angle() - self.game.raycasting.return_half_fov() <= (
+                self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + \
+                self.game.raycasting.return_half_fov():
             self.in_sight = True
         else:
             self.in_sight = False
         return self.in_sight
+
+    def is_in_range(self):  # находится ли в поле взгляда
+        if self.game.player1.return_angle() - self.game.weapon.return_half_fov() <= (
+                self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + \
+                self.game.weapon.return_half_fov():
+            return  True
+        else:
+            return False
 
     def ray_cast_player_npc(self):
         ############################################### Луч от врага к персонажу
@@ -100,7 +114,6 @@ class Enemy():
             y_hor += dy
             depth_hor += delta_depth
 
-
         if cos_a > 0:
             x_vert, dx = (x_map + 1, 1)
         else:
@@ -123,15 +136,14 @@ class Enemy():
             y_vert += dy
             depth_vert += delta_depth
 
-        #if depth_vert < depth_hor:
+        # if depth_vert < depth_hor:
         #    depth = depth_vert
-        #else:
+        # else:
         #    depth = depth_hor
 
-        #pygame.draw.line(self.game.screen, 'white', (50 * x, 50 * y),
+        # pygame.draw.line(self.game.screen, 'white', (50 * x, 50 * y),
         #                 (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
         # ^для дебага
-
 
         player_dist = max(player_dist_h, player_dist_v)
         npc_wall_dist = max(wall_dist_h, wall_dist_v)
@@ -170,7 +182,6 @@ class Enemy():
             y_hor += dy
             depth_hor += delta_depth
 
-
         if cos_a > 0:
             x_vert, dx = (x_map + 1, 1)
         else:
@@ -193,30 +204,39 @@ class Enemy():
             y_vert += dy
             depth_vert += delta_depth
 
-        #if depth_vert < depth_hor:
+        # if depth_vert < depth_hor:
         #    depth = depth_vert
-        #else:
+        # else:
         #    depth = depth_hor
 
-        #pygame.draw.line(self.game.screen, 'blue', (50 * x, 50 * y),
+        # pygame.draw.line(self.game.screen, 'blue', (50 * x, 50 * y),
         #                 (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
         # ^для дебага
 
         npc_dist = max(player_dist_h, player_dist_v)
         player_wall_dist = max(wall_dist_h, wall_dist_v)
 
-        if (0 < player_dist <= npc_wall_dist or not npc_wall_dist) and (0 < npc_dist <= player_wall_dist or not player_wall_dist):
+        if (0 < player_dist <= npc_wall_dist or not npc_wall_dist) and (
+                0 < npc_dist <= player_wall_dist or not player_wall_dist):
             return True
         return False
         ###############################################
 
     def update(self):
-        self.move()
-        self.x_p = self.x / 50
-        self.y_p = self.y / 50
-        self.x_t = int(self.x_p)
-        self.y_t = int(self.y_p)
-        self.draw()
+        if not self.is_dead:
+            self.move()
+            self.x_p = self.x / 50
+            self.y_p = self.y / 50
+            self.x_t = int(self.x_p)
+            self.y_t = int(self.y_p)
+            self.draw()
+
+    def get_damage(self):
+        if self.is_in_range():
+            self.HP -= self.DAMAGE
+            print('Hit')
+        if self.HP <= 0:
+            self.is_dead = True
 
     def draw(self):
         if self.ray_cast_player_npc() and self.is_in_sight():

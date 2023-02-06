@@ -1,19 +1,21 @@
 import math
+
 import pygame
 
-# В этом файле описана система Рейкаста
-# От лица игрока пускают лучи и считают глубину до объекта при помощи математики и подсчёта пересечений с клетакми мира
-# Depth измеряется в клетках
+# Файл про оружие, основа взята из raycasting (для простоты написания)
+# Я знаю что нужно было наследовать weapon от raycasting,
+# но мне не хочется переписывать raycast (он очень чувствительный)
 
-FOV = math.pi / 3
+
+FOV = math.pi / 48
 HALF_FOV = FOV / 2
-NUM_RAYS = 2000 // 2
+NUM_RAYS = 120 // 2
 HALF_NUM_RAYS = NUM_RAYS // 2
 DELTA_ANGLE = FOV / NUM_RAYS
 MAX_DEPTH = 32
 
 
-class RayCasting:
+class Weapon:
     def __init__(self, game):
         self.game = game
 
@@ -47,7 +49,6 @@ class RayCasting:
                 y_hor += dy
                 depth_hor += delta_depth
 
-
             if cos_a > 0:
                 x_vert, dx = (x_map + 1, 1)
             else:
@@ -71,11 +72,10 @@ class RayCasting:
             else:
                 depth = depth_hor
 
-            pygame.draw.line(self.game.screen, 'white', (50 * x, 50 * y),
+            pygame.draw.line(self.game.screen, 'red', (50 * x, 50 * y),
                              (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
 
             ray_angle += DELTA_ANGLE
-
 
     def update(self):
         self.cast_ray()
