@@ -47,7 +47,6 @@ class RayCasting:
                 y_hor += dy
                 depth_hor += delta_depth
 
-
             if cos_a > 0:
                 x_vert, dx = (x_map + 1, 1)
             else:
@@ -73,9 +72,7 @@ class RayCasting:
 
             pygame.draw.line(self.game.screen, 'white', (50 * x, 50 * y),
                              (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
-
             ray_angle += DELTA_ANGLE
-
 
     def update(self):
         self.cast_ray()

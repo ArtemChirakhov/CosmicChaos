@@ -1,7 +1,5 @@
 import sys
 
-import pygame
-
 from blockmap import *
 from enemy import Enemy
 from player import *
