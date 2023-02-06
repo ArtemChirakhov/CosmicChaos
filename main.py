@@ -1,5 +1,7 @@
 import sys
 
+import pygame
+
 from blockmap import *
 from enemy import Enemy
 from player import *
@@ -45,6 +47,8 @@ class Game:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.enemy1.get_damage()
 
     def run(self):
         while True:

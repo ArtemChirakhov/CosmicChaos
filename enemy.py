@@ -224,7 +224,6 @@ class Enemy():
 
     def update(self):
         if not self.is_dead:
-            self.get_damage()
             self.move()
             self.x_p = self.x / 50
             self.y_p = self.y / 50
@@ -232,9 +231,8 @@ class Enemy():
             self.y_t = int(self.y_p)
             self.draw()
 
-
     def get_damage(self):
-        if self.is_in_range() and pygame.event.:
+        if self.is_in_range():
             self.HP -= self.DAMAGE
             print('Hit')
         if self.HP <= 0:
