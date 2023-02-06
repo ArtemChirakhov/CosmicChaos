@@ -1,39 +1,39 @@
-import pygame
-import random
 import math
-from player import Player
+
+from raycasting import *
+from player import*
 
 
 class Enemy():
-    #image = pygame.image.load("img.png")
 
     def __init__(self, game, x, y, color):
         super().__init__()
-        #self.image = Enemy.image
-        #self.rect = self.image.get_rect()
         self.x = x
         self.y = y
+        self.x_p = self.x / 50
+        self.y_p = self.y / 50
+        self.x_t = int(self.x_p)
+        self.y_t = int(self.y_p)
+        self.angle = 1
         self.color = color
-        self.speed = 0.3
+        self.speed = 0.4
         self.game = game
         self.enemy_size = 10
+        self.in_sight = False
+        self.in_sight_tiles = []
 
     def wall_check(self, x, y):
         if (x, y, 1) not in self.game.map.world_map:
             return x, y
 
     def collision_check(self, dx, dy):
-        scale = self.enemy_size / self.game.delta_time
-        #print(int(self.x / 50 + dx * scale), int(self.y / 50))
-        print(self.wall_check(int(self.x / 50 + dx * 0.2), int(self.y / 50)),
-              self.wall_check(int(self.x / 50), int(self.y / 50 + dy * 0.2)), sep="|||")
-        if self.wall_check(int(self.x / 50 + dx * 0.2), int(self.y / 50)):
+        if self.wall_check(int(self.x / 50 + dx * 0.1), int(self.y / 50)):
             self.x += dx
-        if self.wall_check(int(self.x / 50), int(self.y / 50 + dy * 0.2)):
+        if self.wall_check(int(self.x / 50), int(self.y / 50 + dy * 0.1)):
             self.y += dy
 
     def move(self):
-        next_x, next_y = self.game.kickguy.cords()
+        next_x, next_y = self.game.player1.cords()
         self.x_cor = self.x
         self.y_cor = self.y
         next_x *= 50
@@ -58,8 +58,164 @@ class Enemy():
         dy = math.sin(self.angle) * self.speed
         self.collision_check(dx * 5, dy * 5)
 
+    def is_in_sight(self):
+        if (self.angle + math.pi) % math.tau >= self.game.player1.return_angle() - self.game.raycasting.return_half_fov() and (self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + self.game.raycasting.return_half_fov():
+            self.in_sight = True
+        else:
+            self.in_sight = False
+        return self.in_sight
+
+    def ray_cast_player_npc(self):
+        ############################################### Луч от врага к персонажу
+        if self.game.player1.tile() == (int(self.x_t), int(self.y_t)):
+            return True
+
+        wall_dist_v, wall_dist_h = 0, 0
+        player_dist_v, player_dist_h = 0, 0
+        x, y = self.game.player1.cords()
+        x_map, y_map = self.game.player1.tile()
+        ray_angle = (self.angle + math.pi) % math.tau
+        sin_a = math.sin(ray_angle)
+        cos_a = math.cos(ray_angle)
+
+        if sin_a > 0:
+            y_hor, dy = (y_map + 1, 1)
+        else:
+            y_hor, dy = (y_map - 0.000001, -1)
+
+        depth_hor = (y_hor - y) / sin_a
+        x_hor = x + depth_hor * cos_a
+        delta_depth = dy / sin_a
+        dx = delta_depth * cos_a
+
+        for i in range(MAX_DEPTH):
+            tile_hor = (int(x_hor), int(y_hor), 1)
+            if tile_hor == (self.x_t, self.y_t, 1):
+                player_dist_h = depth_hor
+                break
+            if tile_hor in self.game.map.world_map:
+                wall_dist_h = depth_hor
+                break
+            x_hor += dx
+            y_hor += dy
+            depth_hor += delta_depth
+
+
+        if cos_a > 0:
+            x_vert, dx = (x_map + 1, 1)
+        else:
+            x_vert, dx = (x_map - 0.000001, -1)
+
+        depth_vert = (x_vert - x) / cos_a
+        y_vert = y + depth_vert * sin_a
+        delta_depth = dx / cos_a
+        dy = delta_depth * sin_a
+
+        for i in range(MAX_DEPTH):
+            tile_vert = (int(x_vert), int(y_vert), 1)
+            if tile_vert == (self.x_t, self.y_t, 1):
+                player_dist_v = depth_vert
+                break
+            if tile_vert in self.game.map.world_map:
+                wall_dist_v = depth_hor
+                break
+            x_vert += dx
+            y_vert += dy
+            depth_vert += delta_depth
+
+        #if depth_vert < depth_hor:
+        #    depth = depth_vert
+        #else:
+        #    depth = depth_hor
+
+        #pygame.draw.line(self.game.screen, 'white', (50 * x, 50 * y),
+        #                 (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
+
+
+        player_dist = max(player_dist_h, player_dist_v)
+        npc_wall_dist = max(wall_dist_h, wall_dist_v)
+
+        ############################################### Луч от персонажа к врагу
+        if self.game.player1.tile() == (int(self.x_t), int(self.y_t)):
+            return True
+
+        wall_dist_v, wall_dist_h = 0, 0
+        player_dist_v, player_dist_h = 0, 0
+        x, y = self.x_p, self.y_p
+        x_map, y_map = self.x_t, self.y_t
+        ray_angle = self.angle
+        sin_a = math.sin(ray_angle)
+        cos_a = math.cos(ray_angle)
+
+        if sin_a > 0:
+            y_hor, dy = (y_map + 1, 1)
+        else:
+            y_hor, dy = (y_map - 0.000001, -1)
+
+        depth_hor = (y_hor - y) / sin_a
+        x_hor = x + depth_hor * cos_a
+        delta_depth = dy / sin_a
+        dx = delta_depth * cos_a
+
+        for i in range(MAX_DEPTH):
+            tile_hor = (int(x_hor), int(y_hor), 1)
+            if tile_hor == (self.game.player1.tile()[0], self.game.player1.tile()[1], 1):
+                player_dist_h = depth_hor
+                break
+            if tile_hor in self.game.map.world_map:
+                wall_dist_h = depth_hor
+                break
+            x_hor += dx
+            y_hor += dy
+            depth_hor += delta_depth
+
+
+        if cos_a > 0:
+            x_vert, dx = (x_map + 1, 1)
+        else:
+            x_vert, dx = (x_map - 0.000001, -1)
+
+        depth_vert = (x_vert - x) / cos_a
+        y_vert = y + depth_vert * sin_a
+        delta_depth = dx / cos_a
+        dy = delta_depth * sin_a
+
+        for i in range(MAX_DEPTH):
+            tile_vert = (int(x_vert), int(y_vert), 1)
+            if tile_vert == (self.game.player1.tile()[0], self.game.player1.tile()[1], 1):
+                player_dist_v = depth_vert
+                break
+            if tile_vert in self.game.map.world_map:
+                wall_dist_v = depth_hor
+                break
+            x_vert += dx
+            y_vert += dy
+            depth_vert += delta_depth
+
+        #if depth_vert < depth_hor:
+        #    depth = depth_vert
+        #else:
+        #    depth = depth_hor
+
+        #pygame.draw.line(self.game.screen, 'blue', (50 * x, 50 * y),
+        #                 (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
+
+        npc_dist = max(player_dist_h, player_dist_v)
+        player_wall_dist = max(wall_dist_h, wall_dist_v)
+
+        if (0 < player_dist <= npc_wall_dist or not npc_wall_dist) and (0 < npc_dist <= player_wall_dist or not player_wall_dist):
+            return True
+        return False
+        ###############################################
+
     def update(self):
         self.move()
+        self.x_p = self.x / 50
+        self.y_p = self.y / 50
+        self.x_t = int(self.x_p)
+        self.y_t = int(self.y_p)
+        self.draw()
 
     def draw(self):
-        pygame.draw.circle(self.game.screen, self.color, (self.x, self.y), 10)
+        if self.ray_cast_player_npc() and self.is_in_sight():
+            pygame.draw.circle(self.game.screen, self.color, (self.x, self.y), 10)

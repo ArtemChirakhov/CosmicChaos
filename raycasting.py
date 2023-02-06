@@ -17,10 +17,13 @@ class RayCasting:
     def __init__(self, game):
         self.game = game
 
+    def return_half_fov(self):
+        return HALF_FOV
+
     def cast_ray(self):
-        x, y = self.game.kickguy.cords()
-        x_map, y_map = self.game.kickguy.tile()
-        ray_angle = self.game.kickguy.return_angle() - HALF_FOV + 0.00001
+        x, y = self.game.player1.cords()
+        x_map, y_map = self.game.player1.tile()
+        ray_angle = self.game.player1.return_angle() - HALF_FOV + 0.00001
         for ray in range(NUM_RAYS):
 
             sin_a = math.sin(ray_angle)
@@ -37,12 +40,13 @@ class RayCasting:
             dx = delta_depth * cos_a
 
             for i in range(MAX_DEPTH):
-                tile_hor = int(x_hor), int(y_hor), 1
+                tile_hor = (int(x_hor), int(y_hor), 1)
                 if tile_hor in self.game.map.world_map:
                     break
                 x_hor += dx
                 y_hor += dy
                 depth_hor += delta_depth
+
 
             if cos_a > 0:
                 x_vert, dx = (x_map + 1, 1)
@@ -55,7 +59,7 @@ class RayCasting:
             dy = delta_depth * sin_a
 
             for i in range(MAX_DEPTH):
-                tile_vert = int(x_vert), int(y_vert), 1
+                tile_vert = (int(x_vert), int(y_vert), 1)
                 if tile_vert in self.game.map.world_map:
                     break
                 x_vert += dx

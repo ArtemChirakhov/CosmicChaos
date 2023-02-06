@@ -18,21 +18,15 @@ class Game:
         self.new_game()
 
     def new_game(self):
-        self.kickguy = Player(self)
+        self.player1 = Player(self)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
-        self.enemy = Enemy(self, 300, 300, 'red')
+        #self.enemy = Enemy(self, 300, 300, 'red')
         self.enemy1 = Enemy(self, 400, 400, 'orange')
-        #self.all_sprites = pygame.sprite.Group()
-        #self.all_sprites.add(self.enemy)
 
     def update(self):
-        self.kickguy.update()
+        self.player1.update()
         self.raycasting.update()
-        self.enemy.draw()
-        self.enemy1.draw()
-        #self.all_sprites.update()
-        self.enemy.update()
         self.enemy1.update()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
@@ -40,8 +34,7 @@ class Game:
 
     def draw(self):
         self.screen.fill('black')
-        self.kickguy.draw()
-        #self.all_sprites.draw(self.screen)
+        self.player1.draw()
         self.map.draw()
 
     def check_events(self):

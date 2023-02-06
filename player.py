@@ -95,4 +95,4 @@ class Player:
         return self.x, self.y
 
     def tile(self):
-        return self.x // 1, self.y // 1
+        return int(self.x), int(self.y)
