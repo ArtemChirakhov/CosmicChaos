@@ -58,7 +58,7 @@ class Enemy():
         dy = math.sin(self.angle) * self.speed
         self.collision_check(dx * 5, dy * 5)
 
-    def is_in_sight(self):
+    def is_in_sight(self): #находится ли в поле взгляда
         if (self.angle + math.pi) % math.tau >= self.game.player1.return_angle() - self.game.raycasting.return_half_fov() and (self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + self.game.raycasting.return_half_fov():
             self.in_sight = True
         else:
@@ -130,6 +130,7 @@ class Enemy():
 
         #pygame.draw.line(self.game.screen, 'white', (50 * x, 50 * y),
         #                 (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
+        # ^для дебага
 
 
         player_dist = max(player_dist_h, player_dist_v)
@@ -199,6 +200,7 @@ class Enemy():
 
         #pygame.draw.line(self.game.screen, 'blue', (50 * x, 50 * y),
         #                 (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
+        # ^для дебага
 
         npc_dist = max(player_dist_h, player_dist_v)
         player_wall_dist = max(wall_dist_h, wall_dist_v)
