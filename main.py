@@ -23,14 +23,19 @@ class Game:
         self.map = Map(self)
         self.raycasting = RayCasting(self)
         self.weapon = Weapon(self)
+        self.enemy_info = self.map.get_enemy_info()
+        self.enemy_group = []
+        for i in self.enemy_info:
+            self.enemy_group.append(Enemy(self, i[0] * 50, i[1] * 50, 'orange'))
         # self.enemy = Enemy(self, 300, 300, 'red')
-        self.enemy1 = Enemy(self, 400, 400, 'orange')
+        #   self.enemy1 = Enemy(self, 400, 400, 'orange')
 
     def update(self):
         self.player1.update()
         self.raycasting.update()
         self.weapon.update()
-        self.enemy1.update()
+        for i in range(len(self.enemy_group)):
+            self.enemy_group[i].update()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
@@ -46,7 +51,8 @@ class Game:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self.enemy1.get_damage()
+                for i in range(len(self.enemy_group)):
+                    self.enemy_group[i].get_damage()
 
     def run(self):
         while True:
