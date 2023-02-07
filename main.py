@@ -2,9 +2,12 @@ import sys
 import pygame_menu
 import pygame
 
-from raycasting import *
+from blockmap import *
+from enemy import Enemy
 from player import *
 from blockmap import *
+from raycasting import *
+from weapon import *
 
 
 class Game:
@@ -23,13 +26,23 @@ class Game:
                                (180, 0, 0))
 
     def new_game(self):
-        self.kickguy = Player(self)
+        self.player1 = Player(self)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
+        self.weapon = Weapon(self)
+        self.enemy_info = self.map.get_enemy_info()
+        self.enemy_group = []
+        for i in self.enemy_info:
+            self.enemy_group.append(Enemy(self, i[0] * 50, i[1] * 50, 'orange'))
+        # self.enemy = Enemy(self, 300, 300, 'red')
+        #   self.enemy1 = Enemy(self, 400, 400, 'orange')
 
     def update(self):
-        self.kickguy.update()
+        self.player1.update()
         self.raycasting.update()
+        self.weapon.update()
+        for i in range(len(self.enemy_group)):
+            self.enemy_group[i].update()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
@@ -37,7 +50,7 @@ class Game:
 
     def draw(self):
         self.screen.fill('black')
-        self.kickguy.draw()
+        self.player1.draw()
         self.map.draw()
 
     def check_events(self):
@@ -45,12 +58,15 @@ class Game:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i in range(len(self.enemy_group)):
+                    self.enemy_group[i].get_damage()
 
     def run(self):
         while True:
             self.check_events()
-            self.update()
             self.draw()
+            self.update()
 
     def load_game(self):
         pass

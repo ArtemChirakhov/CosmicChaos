@@ -13,6 +13,7 @@ class Player:
         self.angle_speed = 0.002
         self.diagonal_speed = 0.004 * 0.70710678118
         self.player_size = 80
+        self.HP = 100
 
     def angle(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -22,16 +23,16 @@ class Player:
             if mouse_x == self.x:
                 self.kickguy_angle = 1.570796325
             elif mouse_x < self.x:
-                self.kickguy_angle = 3.14 + math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
+                self.kickguy_angle = 3.14 + math.atan((mouse_y - self.y) / (mouse_x - self.x))
             else:
-                self.kickguy_angle = math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
+                self.kickguy_angle = math.atan((mouse_y - self.y) / (mouse_x - self.x))
         else:
             if mouse_x == self.x:
                 self.kickguy_angle = 4.712388975
             elif mouse_x < self.x:
-                self.kickguy_angle = 3.14 + math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
+                self.kickguy_angle = 3.14 + math.atan((mouse_y - self.y) / (mouse_x - self.x))
             else:
-                self.kickguy_angle = math.atan(((mouse_y) - self.y) / ((mouse_x) - self.x))
+                self.kickguy_angle = math.atan((mouse_y - self.y) / (mouse_x - self.x))
 
         self.kickguy_angle %= math.tau  # угол в модуле math считается в радианах
 
@@ -73,7 +74,7 @@ class Player:
 
     def wall_check(self, x, y):
         if (x, y, 1) not in self.game.map.world_map:
-            return (x, y)
+            return x, y
 
     def collision_check(self, dx, dy):
         scale = self.player_size / self.game.delta_time
@@ -82,14 +83,22 @@ class Player:
         if self.wall_check(int(self.x), int(self.y + dy * scale)):
             self.y += dy
 
-
     def draw(self):
         pygame.draw.line(self.game.screen, 'red', (self.x * 50, self.y * 50),
                          (self.x * 50 + 720 * math.cos(self.kickguy_angle),
                           self.y * 50 + 720 * math.sin(self.kickguy_angle)), 1)
         pygame.draw.circle(self.game.screen, 'cyan', (self.x * 50, self.y * 50), 10)
 
+    def is_dead(self):
+        if self.HP <= 0:
+            return True
+        return False
+
+    def inflict_damage(self):
+        self.HP -= 1
+
     def update(self):
+        self.is_dead()
         self.movement()
         self.angle()
 
@@ -97,4 +106,4 @@ class Player:
         return self.x, self.y
 
     def tile(self):
-        return self.x // 1, self.y // 1
+        return int(self.x), int(self.y)
