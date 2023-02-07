@@ -23,7 +23,9 @@ class Game:
         self.load_data = open("Data/Save.txt", mode="r")
         data = list(map(int, self.load_data.readline().split(";")))
         print(data)
+        self.sptite_group = pygame.sprite.Group()
         self.player1 = Player(self)
+        self.sptite_group.add(self.player1)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
         self.weapon = Weapon(self)
@@ -34,7 +36,6 @@ class Game:
             self.enemy_group.append(Enemy(self, i[0] * 50, i[1] * 50, 'orange'))
 
     def update(self):
-        self.player1.update()
         self.raycasting.update()
         self.weapon.update()
         count = 0
@@ -44,13 +45,14 @@ class Game:
                 count += 1
         if count == len(self.enemy_group):
             self.new_game()
+        self.sptite_group.draw(self.screen)
+        self.sptite_group.update()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
 
     def draw(self):
         self.screen.fill('black')
-        self.player1.draw()
         self.map.draw()
 
     def check_events(self):
