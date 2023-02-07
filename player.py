@@ -13,6 +13,7 @@ class Player:
         self.angle_speed = 0.002
         self.diagonal_speed = 0.004 * 0.70710678118
         self.player_size = 80
+        self.HP = 100
 
     def angle(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -88,7 +89,16 @@ class Player:
                           self.y * 50 + 720 * math.sin(self.kickguy_angle)), 1)
         pygame.draw.circle(self.game.screen, 'cyan', (self.x * 50, self.y * 50), 10)
 
+    def is_dead(self):
+        if self.HP <= 0:
+            return True
+        return False
+
+    def inflict_damage(self):
+        self.HP -= 1
+
     def update(self):
+        self.is_dead()
         self.movement()
         self.angle()
 
