@@ -3,7 +3,7 @@ from raycasting import *
 
 class Enemy():
 
-    def __init__(self, game, x, y, color):
+    def __init__(self, game, x, y, color, diff):
         super().__init__()
         # координаты и тд.
         self.x = x
@@ -21,7 +21,7 @@ class Enemy():
         self.in_sight = False
         # стрельба и урон
         self.DAMAGE = 50
-        self.HP = 100
+        self.HP = 100 + 25 * diff
         self.is_dead = False
 
     def wall_check(self, x, y):
