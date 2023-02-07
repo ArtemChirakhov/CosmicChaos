@@ -3,11 +3,18 @@ import math
 import pygame
 
 
-class Player:
+class Player(pygame.sprite.Sprite):
     def __init__(self, game):
+        super().__init__()
+        self.og_image = pygame.image.load("Data/Kickguy.png")
+        self.image = self.og_image
         self.game = game
+        self.rect = self.og_image.get_rect()
         self.x = 1.5
         self.y = 1.5
+        self.offset = 20
+        self.rect.x = self.x * 50 - self.offset
+        self.rect.y = self.y * 50 - self.offset
         self.kickguy_angle = 0
         self.player_speed = 0.004
         self.angle_speed = 0.002
@@ -97,10 +104,18 @@ class Player:
     def inflict_damage(self):
         self.HP -= 1
 
+    def rot_center(self, image, rect, angle):
+        rot_image = pygame.transform.rotate(image, angle)
+        rot_rect = rot_image.get_rect(center=rect.center)
+        return rot_image
+
     def update(self):
         self.is_dead()
         self.movement()
+        self.rect.x = self.x * 50 - self.offset
+        self.rect.y = self.y * 50 - self.offset
         self.angle()
+        self.image = self.rot_center(self.og_image, self.rect, self.return_angle() * -57.2958)
 
     def cords(self):
         return self.x, self.y
