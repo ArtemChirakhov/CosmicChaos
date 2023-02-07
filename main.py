@@ -1,4 +1,5 @@
 import sys
+import pygame_menu
 
 from blockmap import *
 from enemy import Enemy
@@ -19,23 +20,30 @@ class Game:
         self.new_game()
 
     def new_game(self):
+        self.load_data = open("Data/Save.txt", mode="r")
+        data = list(map(int, self.load_data.readline().split(";")))
+        print(data)
         self.player1 = Player(self)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
         self.weapon = Weapon(self)
         self.enemy_info = self.map.get_enemy_info()
         self.enemy_group = []
+        self.enemy_count = 0
         for i in self.enemy_info:
             self.enemy_group.append(Enemy(self, i[0] * 50, i[1] * 50, 'orange'))
-        # self.enemy = Enemy(self, 300, 300, 'red')
-        #   self.enemy1 = Enemy(self, 400, 400, 'orange')
 
     def update(self):
         self.player1.update()
         self.raycasting.update()
         self.weapon.update()
+        count = 0
         for i in range(len(self.enemy_group)):
             self.enemy_group[i].update()
+            if self.enemy_group[i].return_dead():
+                count += 1
+        if count == len(self.enemy_group):
+            self.new_game()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
@@ -60,7 +68,22 @@ class Game:
             self.draw()
             self.update()
 
+    def load_game(self):
+        pass
+
+    def menu(self):
+        font = pygame_menu.font.FONT_BEBAS
+        myimage = pygame_menu.baseimage.BaseImage(image_path="Data/cosmos1.jpg",
+                                                  drawing_mode=pygame_menu.baseimage.IMAGE_MODE_CENTER)
+        mytheme = pygame_menu.Theme(background_color=myimage, title_background_color=(0, 0, 0), title_font=font,
+                                    title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_SIMPLE, widget_font=font)
+        menu = pygame_menu.Menu('Cosmic Chaos', 1320, 720, theme=mytheme)
+        menu.add.button('New Game', self.run)
+        menu.add.button('Load game', self.load_game)
+        menu.add.button('Quit', pygame_menu.events.EXIT)
+        menu.mainloop(self.screen)
+
 
 if __name__ == '__main__':
     game = Game()
-    game.run()
+    game.menu()

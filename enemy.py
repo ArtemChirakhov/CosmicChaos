@@ -202,15 +202,6 @@ class Enemy():
             y_vert += dy
             depth_vert += delta_depth
 
-        # if depth_vert < depth_hor:
-        #    depth = depth_vert
-        # else:
-        #    depth = depth_hor
-
-        # pygame.draw.line(self.game.screen, 'blue', (50 * x, 50 * y),
-        #                 (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
-        # ^для дебага
-
         npc_dist = max(player_dist_h, player_dist_v)
         player_wall_dist = max(wall_dist_h, wall_dist_v)
 
@@ -226,6 +217,9 @@ class Enemy():
             print('Hit')
         if self.HP <= 0:
             self.is_dead = True
+
+    def return_dead(self):
+        return self.is_dead
 
     def deal_damage(self):
         if (self.x_t, self.y_t) == self.game.player1.tile():
