@@ -21,9 +21,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.delta_time = 1
         self.new_game()
-        f1 = pygame.font.Font(None, 36)
-        self.text1 = f1.render('Hello Привет', True,
-                               (180, 0, 0))
+
 
     def new_game(self):
         self.player1 = Player(self)
@@ -46,7 +44,6 @@ class Game:
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
-        self.screen.blit(self.text1, (10, 50))
 
     def draw(self):
         self.screen.fill('black')
