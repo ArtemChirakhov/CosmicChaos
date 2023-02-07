@@ -24,7 +24,9 @@ class Game:
 
 
     def new_game(self):
+        self.sptite_group = pygame.sprite.Group()
         self.player1 = Player(self)
+        self.sptite_group.add(self.player1)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
         self.weapon = Weapon(self)
@@ -32,13 +34,12 @@ class Game:
         self.enemy_group = []
         for i in self.enemy_info:
             self.enemy_group.append(Enemy(self, i[0] * 50, i[1] * 50, 'orange'))
-        # self.enemy = Enemy(self, 300, 300, 'red')
-        #   self.enemy1 = Enemy(self, 400, 400, 'orange')
 
     def update(self):
-        self.player1.update()
         self.raycasting.update()
         self.weapon.update()
+        self.sptite_group.draw(self.screen)
+        self.sptite_group.update()
         for i in range(len(self.enemy_group)):
             self.enemy_group[i].update()
         pygame.display.flip()
@@ -47,7 +48,6 @@ class Game:
 
     def draw(self):
         self.screen.fill('black')
-        self.player1.draw()
         self.map.draw()
 
     def check_events(self):
