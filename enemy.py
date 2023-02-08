@@ -1,7 +1,7 @@
 from raycasting import *
 
 
-class Enemy():
+class Enemy:
 
     def __init__(self, game, x, y, color, difficulty):
         super().__init__()

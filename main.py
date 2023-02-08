@@ -123,7 +123,8 @@ class Game:
                                                   drawing_mode=pygame_menu.baseimage.IMAGE_MODE_REPEAT_Y)
         mytheme = pygame_menu.Theme(background_color=myimage, title_background_color=(0, 0, 0), title_font=font,
                                     widget_font=font)
-        self.menu1 = pygame_menu.Menu(f'You died, your score is {self.kills}', 1320, 720, theme=mytheme)
+        self.menu1 = pygame_menu.Menu(f'You died, your score is {self.kills}, Stage: {self.stage}', 1320, 720,
+                                      theme=mytheme)
         self.menu1.enable()
         self.menu1.add.button('Quit', pygame_menu.events.EXIT)
         self.menu1.set_absolute_position(0, 0)
