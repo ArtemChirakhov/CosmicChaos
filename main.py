@@ -25,9 +25,10 @@ class Game:
         self.hit_sound = pygame.mixer.Sound("Data/Hit.mp3")
         self.death_sound = pygame.mixer.Sound("Data/You_lost.mp3")
         self.heart = pygame.image.load("Data/heart.png")
+        self.stage = 1
         self.new_game(0, 100)
 
-    def new_game(self, kills, player_hp):
+    def new_game(self, kills, player_hp, stage=1):
         # self.load_data = open("Data/Save.txt", mode="r")
         # data = list(map(int, self.load_data.readline().split(";")))
         # print(data)
@@ -45,7 +46,9 @@ class Game:
             self.enemy_group.append(Enemy(self, i[1] * 50 + 25, i[0] * 50 + 25, 'darkgreen', self.kills))
         self.hp_text = self.font.render(str(self.player1.return_hp()), True, (0, 0, 0))
         self.kill_text = self.font.render(f'Killcount: {self.kills}', True, (0, 0, 0))
+        self.stage_text = self.font.render(f"Stage: {self.stage}", True, (0, 0, 0))
         self.start_sound.play()
+        print(self.stage)
 
     def update(self):
         self.raycasting.update()
@@ -57,7 +60,8 @@ class Game:
                 count += 1
         if count == len(self.enemy_group):
             self.kills += count
-            self.new_game(self.kills, self.player1.return_hp())
+            self.stage += 1
+            self.new_game(self.kills, self.player1.return_hp(), self.stage)
         if self.player1.is_dead():
             self.kills += count
             self.death_screen1()
@@ -66,6 +70,7 @@ class Game:
         self.sprite_group.update()
         self.hp_text = self.font.render(str(self.player1.return_hp()), True, (0, 0, 0))
         self.kill_text = self.font.render(f'Killcount: {self.kills + count}', True, (0, 0, 0))
+        self.stage_text = self.font.render(f"Stage: {self.stage}", True, (0, 0, 0))
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
@@ -75,6 +80,7 @@ class Game:
         self.map.draw()
         self.screen.blit(self.hp_text, (40, 10))
         self.screen.blit(self.kill_text, (1000, 10))
+        self.screen.blit(self.stage_text, (1200, 10))
         self.screen.blit(self.heart, (10, 5))
 
     def check_events(self):

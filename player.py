@@ -104,10 +104,8 @@ class Player(pygame.sprite.Sprite):
     def inflict_damage(self):
         self.HP -= 1
 
-
-    def rot_center(self, image, rect, angle):
+    def rot_center(self, image, angle):
         rot_image = pygame.transform.rotate(image, angle)
-        rot_rect = rot_image.get_rect(center=rect.center)
         return rot_image
 
     def update(self):
@@ -115,7 +113,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x * 50 - self.offset
         self.rect.y = self.y * 50 - self.offset
         self.angle()
-        self.image = self.rot_center(self.og_image, self.rect, self.return_angle() * -57.2958)
+        self.image = self.rot_center(self.og_image, self.return_angle() * -57.2958)
 
     def cords(self):
         return self.x, self.y
