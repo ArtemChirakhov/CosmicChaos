@@ -4,7 +4,7 @@ import pygame
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, game):
+    def __init__(self, game, HP):
         super().__init__()
         self.og_image = pygame.image.load("Data/Kickguy.png")
         self.image = self.og_image
@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.angle_speed = 0.002
         self.diagonal_speed = 0.004 * 0.70710678118
         self.player_size = 80
-        self.HP = 100
+        self.HP = HP
 
     def angle(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()

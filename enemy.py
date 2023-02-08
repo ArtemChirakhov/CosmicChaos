@@ -3,7 +3,7 @@ from raycasting import *
 
 class Enemy():
 
-    def __init__(self, game, x, y, color):
+    def __init__(self, game, x, y, color, difficulty):
         super().__init__()
         # координаты и тд.
         self.x = x
@@ -21,7 +21,7 @@ class Enemy():
         self.in_sight = False
         # стрельба и урон
         self.DAMAGE = 50
-        self.HP = 100
+        self.HP = 100 + int(2.5 * difficulty)
         self.is_dead = False
 
     def wall_check(self, x, y):
@@ -214,7 +214,8 @@ class Enemy():
     def get_damage(self):
         if self.is_in_range():
             self.HP -= self.DAMAGE
-            print('Hit')
+            self.game.hit_sound.play()
+
         if self.HP <= 0:
             self.is_dead = True
 
