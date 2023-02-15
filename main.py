@@ -48,7 +48,6 @@ class Game:
         self.kill_text = self.font.render(f'Killcount: {self.kills}', True, (0, 0, 0))
         self.stage_text = self.font.render(f"Stage: {self.stage}", True, (0, 0, 0))
         self.start_sound.play()
-        print(self.stage)
 
     def update(self):
         self.raycasting.update()
@@ -64,7 +63,7 @@ class Game:
             self.new_game(self.kills, self.player1.return_hp(), self.stage)
         if self.player1.is_dead():
             self.kills += count
-            self.death_screen1()
+            self.death_screen()
 
         self.sprite_group.draw(self.screen)
         self.sprite_group.update()
@@ -116,7 +115,7 @@ class Game:
         menu.add.button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.screen)
 
-    def death_screen1(self):
+    def death_screen(self):
         self.death_sound.play()
         font = pygame_menu.font.FONT_BEBAS
         myimage = pygame_menu.baseimage.BaseImage(image_path="Data/Skull1.PNG",

@@ -6,12 +6,12 @@ class Enemy:
     def __init__(self, game, x, y, color, difficulty):
         super().__init__()
         # координаты и тд.
-        self.x = x
-        self.y = y
-        self.x_p = self.x / 50
-        self.y_p = self.y / 50
-        self.x_t = int(self.x_p)
-        self.y_t = int(self.y_p)
+        self.x_pix = x
+        self.y_pix = y
+        self.x1 = self.x_pix / 50
+        self.y1 = self.y_pix / 50
+        self.x_t = int(self.x1)
+        self.y_t = int(self.y1)
         self.angle = 1
         # отображение и перемещение
         self.color = color
@@ -24,20 +24,52 @@ class Enemy:
         self.HP = 100 + int(2.5 * difficulty)
         self.is_dead = False
 
+    def return_dead(self):
+        return self.is_dead
+
+    def is_in_range(self):  # находится ли в поле взгляда
+        if self.game.player1.return_angle() - self.game.weapon.return_half_fov() <= (
+                self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + \
+                self.game.weapon.return_half_fov():
+            return True
+        else:
+            return False
+
+    def is_in_sight(self):  # находится ли в поле взгляда
+        if self.game.player1.return_angle() - self.game.raycasting.return_half_fov() <= (
+                self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + \
+                self.game.raycasting.return_half_fov():
+            self.in_sight = True
+        else:
+            self.in_sight = False
+        return self.in_sight
+
+    def get_damage(self):
+        if self.is_in_range():
+            self.HP -= self.DAMAGE
+            self.game.hit_sound.play()
+
+        if self.HP <= 0:
+            self.is_dead = True
+
+    def deal_damage(self):
+        if (self.x_t, self.y_t) == self.game.player1.tile():
+            self.game.player1.inflict_damage()
+
     def wall_check(self, x, y):
         if (x, y, 1) not in self.game.map.world_map:
             return x, y
 
     def collision_check(self, dx, dy):
-        if self.wall_check(int(self.x / 50 + dx * 0.1), int(self.y / 50)):
-            self.x += dx
-        if self.wall_check(int(self.x / 50), int(self.y / 50 + dy * 0.1)):
-            self.y += dy
+        if self.wall_check(int(self.x_pix / 50 + dx * 0.1), int(self.y_pix / 50)):
+            self.x_pix += dx
+        if self.wall_check(int(self.x_pix / 50), int(self.y_pix / 50 + dy * 0.1)):
+            self.y_pix += dy
 
     def move(self):
         next_x, next_y = self.game.player1.cords()
-        self.x_cor = self.x
-        self.y_cor = self.y
+        self.x_cor = self.x_pix
+        self.y_cor = self.y_pix
         next_x *= 50
         next_y *= 50
         if next_y > self.y_cor:
@@ -60,25 +92,8 @@ class Enemy:
         dy = math.sin(self.angle) * self.speed
         self.collision_check(dx * 5, dy * 5)
 
-    def is_in_sight(self):  # находится ли в поле взгляда
-        if self.game.player1.return_angle() - self.game.raycasting.return_half_fov() <= (
-                self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + \
-                self.game.raycasting.return_half_fov():
-            self.in_sight = True
-        else:
-            self.in_sight = False
-        return self.in_sight
-
-    def is_in_range(self):  # находится ли в поле взгляда
-        if self.game.player1.return_angle() - self.game.weapon.return_half_fov() <= (
-                self.angle + math.pi) % math.tau <= self.game.player1.return_angle() + \
-                self.game.weapon.return_half_fov():
-            return True
-        else:
-            return False
-
     def ray_cast_player_npc(self):
-        ############################################### Луч от врага к персонажу
+        # Луч от врага к персонажу
         if self.game.player1.tile() == (int(self.x_t), int(self.y_t)):
             return True
 
@@ -139,20 +154,20 @@ class Enemy:
         # else:
         #    depth = depth_hor
 
-        # pygame.draw.line(self.game.screen, 'white', (50 * x, 50 * y),
-        #                 (50 * x + depth * 50 * cos_a, 50 * y + depth * 50 * sin_a), 3)
+        # pygame.draw.line(self.game.screen, 'white', (50 * x_pix, 50 * y_pix),
+        #                 (50 * x_pix + depth * 50 * cos_a, 50 * y_pix + depth * 50 * sin_a), 3)
         # ^для дебага
 
         player_dist = max(player_dist_h, player_dist_v)
         npc_wall_dist = max(wall_dist_h, wall_dist_v)
 
-        ############################################### Луч от персонажа к врагу
+        # Луч от персонажа к врагу
         if self.game.player1.tile() == (int(self.x_t), int(self.y_t)):
             return True
 
         wall_dist_v, wall_dist_h = 0, 0
         player_dist_v, player_dist_h = 0, 0
-        x, y = self.x_p, self.y_p
+        x, y = self.x1, self.y1
         x_map, y_map = self.x_t, self.y_t
         ray_angle = self.angle
         sin_a = math.sin(ray_angle)
@@ -209,33 +224,17 @@ class Enemy:
                 0 < npc_dist <= player_wall_dist or not player_wall_dist):
             return True
         return False
-        ###############################################
-
-    def get_damage(self):
-        if self.is_in_range():
-            self.HP -= self.DAMAGE
-            self.game.hit_sound.play()
-
-        if self.HP <= 0:
-            self.is_dead = True
-
-    def return_dead(self):
-        return self.is_dead
-
-    def deal_damage(self):
-        if (self.x_t, self.y_t) == self.game.player1.tile():
-            self.game.player1.inflict_damage()
 
     def update(self):
         if not self.is_dead:
             self.move()
             self.deal_damage()
-            self.x_p = self.x / 50
-            self.y_p = self.y / 50
-            self.x_t = int(self.x_p)
-            self.y_t = int(self.y_p)
+            self.x1 = self.x_pix / 50
+            self.y1 = self.y_pix / 50
+            self.x_t = int(self.x1)
+            self.y_t = int(self.y1)
             self.draw()
 
     def draw(self):
         if self.ray_cast_player_npc() and self.is_in_sight():
-            pygame.draw.circle(self.game.screen, self.color, (self.x, self.y), 10)
+            pygame.draw.circle(self.game.screen, self.color, (self.x_pix, self.y_pix), 10)
