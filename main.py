@@ -18,17 +18,17 @@ class Game:
         self.clock = pygame.time.Clock()
         self.delta_time = 1
 
-
     def new_game(self):
         self.new_data = open("Data/Save.txt", mode="w")
         self.new_data.write("100;0;0")
         self.new_data.close()
-        self.start_game()
+        self.run()
 
     def start_game(self):
-        self.load_data = open("Data/Save.txt", mode="r")
-        print(list(map(int, self.load_data.readline().split(";"))), len(self.load_data.readline().split(";")))
-        data = list(map(int, self.load_data.readline().split(";")))
+        self.load_data = open("Data/Save.txt", mode="r", encoding="utf8")
+        data = self.load_data.readline().split(";")
+        for i in range(len(data)):
+            data[i] = int(data[i])
         player_hp = data[0]
         self.kills = data[1]
         self.difficulty = data[2]
