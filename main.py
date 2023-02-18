@@ -30,24 +30,23 @@ class Game:
     def new_game(self):
         self.new_data = open("Data/Save.txt", mode="w")
         self.new_data.write("100;0;0")
-        self.run()
-        self.kills = kills
+        self.new_data.close()
         self.sprite_group = pygame.sprite.Group()
-        self.player1 = Player(self, player_hp)
-        self.sprite_group.add(self.player1)
+        self.run()
 
     def start_game(self):
         self.load_data = open("Data/Save.txt", mode="r", encoding="utf8")
         data = self.load_data.readline().split(";")
+        print(data)
         for i in range(len(data)):
             data[i] = int(data[i])
         player_hp = data[0]
         self.kills = data[1]
-        self.difficulty = data[2]
+        self.stage = data[2]
         self.lvl_kills = 0
-        self.sptite_group = pygame.sprite.Group()
+        self.sprite_group = pygame.sprite.Group()
         self.player1 = Player(self, player_hp)
-        self.sptite_group.add(self.player1)
+        self.sprite_group.add(self.player1)
         self.map = Map(self)
         self.raycasting = RayCasting(self)
         self.weapon = Weapon(self)
@@ -55,7 +54,7 @@ class Game:
         self.enemy_group = []
         self.enemy_count = 0
         for i in self.enemy_info:
-            self.enemy_group.append(Enemy(self, i[1] * 50 + 25, i[0] * 50 + 25, 'darkgreen', self.kills))
+            self.enemy_group.append(Enemy(self, i[1] * 50 + 25, i[0] * 50 + 25, 'darkgreen', self.stage))
         self.hp_text = self.font.render(str(self.player1.return_hp()), True, (0, 0, 0))
         self.kill_text = self.font.render(f'Killcount: {self.kills}', True, (0, 0, 0))
         self.stage_text = self.font.render(f"Stage: {self.stage}", True, (0, 0, 0))
@@ -70,16 +69,17 @@ class Game:
             if self.enemy_group[i].return_dead():
                 count += 1
         self.lvl_kills = count
-        self.sptite_group.draw(self.screen)
-        self.sptite_group.update()
+        self.sprite_group.draw(self.screen)
+        self.sprite_group.update()
         if count == len(self.enemy_group):
-            self.kills += count
             self.stage += 1
-            self.new_game(self.kills, self.player1.return_hp(), self.stage)
+            self.new_data = open("Data/Save.txt", mode="w")
+            self.new_data.write(f"{self.player1.return_hp()};{self.kills + self.lvl_kills};{self.stage}")
+            self.new_data.close()
+            self.run()
         if self.player1.is_dead():
             self.kills += count
             self.death_screen()
-
         self.sprite_group.draw(self.screen)
         self.sprite_group.update()
         self.hp_text = self.font.render(str(self.player1.return_hp()), True, (0, 0, 0))
@@ -88,9 +88,6 @@ class Game:
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
-        if count == len(self.enemy_group):
-            self.new_data.write(f"{self.player1.return_hp()};{self.kills + self.lvl_kills};{self.difficulty}".strip())
-            self.run()
 
     def draw(self):
         self.screen.fill('black')

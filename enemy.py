@@ -21,7 +21,7 @@ class Enemy:
         self.in_sight = False
         # стрельба и урон
         self.DAMAGE = 50
-        self.HP = 100 + int(2.5 * difficulty)
+        self.HP = 100 + int(25 * difficulty)
         self.is_dead = False
 
     def return_dead(self):
