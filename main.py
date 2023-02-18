@@ -21,7 +21,6 @@ class Game:
     def new_game(self):
         self.new_data = open("Data/Save.txt", mode="w")
         self.new_data.write("100;0;0")
-        self.new_data.close()
         self.run()
 
     def start_game(self):
@@ -54,14 +53,14 @@ class Game:
             if self.enemy_group[i].return_dead():
                 count += 1
         self.lvl_kills = count
-        if count == len(self.enemy_group):
-            self.load_data.write(f"{self.player1.return_hp()};{self.kills + self.lvl_kills};{self.difficulty}")
-            self.start_game()
         self.sptite_group.draw(self.screen)
         self.sptite_group.update()
         pygame.display.flip()
         self.delta_time = self.clock.tick(self.FPS)
         pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
+        if count == len(self.enemy_group):
+            self.new_data.write(f"{self.player1.return_hp()};{self.kills + self.lvl_kills};{self.difficulty}".strip())
+            self.run()
 
     def draw(self):
         self.screen.fill('black')
