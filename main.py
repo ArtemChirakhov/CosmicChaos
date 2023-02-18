@@ -125,7 +125,7 @@ class Game:
         menu = pygame_menu.Menu('Cosmic Chaos', 1320, 720, theme=mytheme)
         menu.add.button('New Game', self.new_game)
         menu.add.button('Load game', self.run)
-        menu.add.button('Quit', pygame_menu.events.EXIT)
+        menu.add.button('Quit', sys.exit)
         menu.mainloop(self.screen)
 
     def death_screen(self):
@@ -138,7 +138,7 @@ class Game:
         self.menu1 = pygame_menu.Menu(f'You died, your score is {self.kills}, Stage: {self.stage}', 1320, 720,
                                       theme=mytheme)
         self.menu1.enable()
-        self.menu1.add.button('Quit', pygame_menu.events.EXIT)
+        self.menu1.add.button('Quit', sys.exit)
         self.menu1.set_absolute_position(0, 0)
         self.menu1.mainloop(self.screen)
 
