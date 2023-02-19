@@ -37,7 +37,6 @@ class Game:
     def start_game(self):
         self.load_data = open("Data/Save.txt", mode="r", encoding="utf8")
         data = self.load_data.readline().split(";")
-        print(data)
         for i in range(len(data)):
             data[i] = int(data[i])
         player_hp = data[0]
